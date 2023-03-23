@@ -71,6 +71,7 @@ public class VillagerToken extends MobToken{
       tokenTag.putBoolean("hasIllager",false);
       tokenTag.putInt("ironVillagers",0);
       tokenTag.putInt("restockTimer",0);
+      tokenTag.putInt("sort",0); // 0 is by XP, 1 is by profession
       NbtList villagers = new NbtList();
       NbtList storage = new NbtList();
       NbtList tools = new NbtList();
@@ -222,6 +223,7 @@ public class VillagerToken extends MobToken{
    
    public List<NbtCompound> getVillagerTags(NbtCompound tokenData){
       NbtList villagerTags = tokenData.getList("villagers", NbtElement.COMPOUND_TYPE);
+      int sortType = tokenData.getInt("sortType"); // 0 xp, 1 profession
       List<NbtCompound> villagers = new ArrayList<>();
       
       for(NbtElement ele : villagerTags){
@@ -230,7 +232,12 @@ public class VillagerToken extends MobToken{
       }
    
       Comparator<NbtCompound> villagerComparator = (NbtCompound v1, NbtCompound v2) -> {
-         int sum1 = v1.getInt("Xp"); int sum2 = v2.getInt("Xp");
+         int sum1 = 0,sum2 = 0;
+         if(sortType == 0){
+            sum1 = v1.getInt("Xp"); sum2 = v2.getInt("Xp");
+         }else if(sortType == 1){
+            sum1 = v1.getString("profession").compareTo(v2.getString("profession"));
+         }
          if(v1.getBoolean("favorite")) sum1 += 100000;
          if(v2.getBoolean("favorite")) sum2 += 100000;
          if(v1.getBoolean("baby")) sum1 -= 10000;

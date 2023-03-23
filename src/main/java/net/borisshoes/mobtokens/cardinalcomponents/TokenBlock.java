@@ -7,6 +7,8 @@ import net.minecraft.block.entity.SkullBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.UUID;
@@ -85,7 +87,9 @@ public class TokenBlock {
       MobToken token = MobTokens.registry.get(id);
       if(token == null) return ItemStack.EMPTY;
       ItemStack stack = token.getNewToken();
+      MutableText text = Text.literal(data.getString("name")).setStyle(token.getDisplayName().getStyle().withItalic(false));
       stack.getNbt().put("mobtokens",data);
+      stack.setCustomName(text);
       return stack;
    }
 }

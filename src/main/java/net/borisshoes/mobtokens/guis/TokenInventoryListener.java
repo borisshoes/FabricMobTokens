@@ -5,9 +5,13 @@ import net.borisshoes.mobtokens.tokens.MobToken;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.InventoryChangedListener;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.util.Pair;
+
+import static net.borisshoes.mobtokens.Mobtokens.MAX_MOBS;
 
 public class TokenInventoryListener implements InventoryChangedListener {
    
@@ -40,7 +44,19 @@ public class TokenInventoryListener implements InventoryChangedListener {
                }
             }
             for(Pair<ItemStack, Double> pair : token.getRequiredItems()){
-               if(stack.isOf(pair.getLeft().getItem())){
+               ItemStack reqStack = pair.getLeft();
+               if(stack.isOf(reqStack.getItem())){
+                  if(reqStack.isOf(Items.BEE_NEST) || reqStack.isOf(Items.BEEHIVE)){
+                     NbtCompound nestNbt = stack.getNbt();
+                     if(nestNbt != null && nestNbt.contains("BlockEntityTag")){
+                        NbtCompound bet = nestNbt.getCompound("BlockEntityTag");
+                        if(bet.contains("Bees")){
+                           NbtList bees = bet.getList("Bees", NbtElement.COMPOUND_TYPE);
+                           int curCount = tokenData.getInt("count");
+                           tokenData.putInt("count",Math.min(MAX_MOBS,curCount+bees.size()*stack.getCount()));
+                        }
+                     }
+                  }
                   tokenData.putInt("requiredItems",reqItems+stack.getCount());
                   inv.setStack(0,ItemStack.EMPTY);
                   break;

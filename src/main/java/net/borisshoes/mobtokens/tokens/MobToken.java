@@ -18,6 +18,7 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
@@ -148,6 +149,7 @@ public abstract class MobToken {
       NbtCompound nbt = item.getOrCreateNbt();
       NbtCompound tokenTag = new NbtCompound();
       NbtCompound display = new NbtCompound();
+      tokenTag.putString("name",name);
       tokenTag.putString("id",id);
       tokenTag.putString("UUID", UUID.randomUUID().toString());
       tokenTag.putInt("count",0);
@@ -222,9 +224,9 @@ public abstract class MobToken {
       OPEN_GUIS.put(player,gui);
    }
    
-   public void openRenameGui(ServerPlayerEntity player, TokenBlock tokenBlock, NbtCompound villager, ItemStack item){
-      RenameGui gui = new RenameGui(player,this,tokenBlock,villager,item);
-      gui.setTitle(Text.literal("Rename Villager"));
+   public void openRenameGui(ServerPlayerEntity player, TokenBlock tokenBlock, NbtCompound guiData, ItemStack item){
+      RenameGui gui = new RenameGui(player,this,tokenBlock,guiData,item);
+      gui.setTitle(Text.literal("Rename"));
       gui.open();
       tokenBlock.setGuiOpen(true);
       OPEN_GUIS.put(player,gui);
@@ -232,7 +234,8 @@ public abstract class MobToken {
    
    public void openVillagerGui(ServerPlayerEntity player, TokenBlock tokenBlock, NbtCompound villager){
       TokenGui gui = new TokenGui(ScreenHandlerType.GENERIC_9X4,player,tokenBlock,this, TokenGui.TokenGuiMode.VILLAGER_MENU, villager);
-      gui.setTitle(getDisplayName());
+      MutableText text = Text.literal(tokenBlock.getData().getString("name")).setStyle(getDisplayName().getStyle());
+      gui.setTitle(text);
       gui.rebuildGui();
       gui.open();
       tokenBlock.setGuiOpen(true);
@@ -252,7 +255,8 @@ public abstract class MobToken {
       }else{
          gui = new TokenGui(ScreenHandlerType.GENERIC_9X3,player,tokenBlock,this, mode);
       }
-      gui.setTitle(getDisplayName());
+      MutableText text = Text.literal(tokenBlock.getData().getString("name")).setStyle(getDisplayName().getStyle());
+      gui.setTitle(text);
       gui.rebuildGui();
       gui.open();
       tokenBlock.setGuiOpen(true);

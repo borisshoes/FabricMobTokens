@@ -13,8 +13,12 @@ import net.borisshoes.mobtokens.tokens.SheepToken;
 import net.borisshoes.mobtokens.tokens.VillagerToken;
 import net.borisshoes.mobtokens.utils.MobHeadUtils;
 import net.borisshoes.mobtokens.utils.TradeGenerationUtils;
+import net.fabricmc.fabric.mixin.transfer.HopperBlockEntityMixin;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.Hopper;
+import net.minecraft.block.entity.HopperBlockEntity;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
@@ -26,6 +30,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.*;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContext;
+import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -115,6 +120,7 @@ public class TokenGui extends SimpleGui implements TokenRelatedGui{
    @Override
    public boolean onAnyClick(int index, ClickType type, SlotActionType action){
       NbtCompound tokenData = tokenBlock.getData();
+      String name = tokenData.getString("name");
       int count = tokenData.getInt("count");
       int babyCount = tokenData.getInt("babyCount");
       int growTimer = tokenData.getInt("growTimer");
@@ -155,6 +161,9 @@ public class TokenGui extends SimpleGui implements TokenRelatedGui{
             }else{
                player.sendMessage(Text.literal("This creature does not require any tools").formatted(Formatting.RED,Formatting.ITALIC));
             }
+         }else if(index == 8){
+            returnItems();
+            token.openRenameGui(player, tokenBlock, tokenBlock.getData(), getSlot(4).getItemStack());
          }
       }else if(mode == TokenGuiMode.BREEDING){
          int breedCount = 0;
@@ -244,7 +253,13 @@ public class TokenGui extends SimpleGui implements TokenRelatedGui{
                LivingEntity entity = (LivingEntity) entityType.create(player.getWorld());
                entity.setAttacker(player);
                entity.setAttacking(player);
-               LootContext.Builder builder = ((LivingEntityAccessor) entity).invokeGetLootContextBuilder(true, DamageSource.player(player));
+               DamageSource dmgSource = DamageSource.player(player);
+               if(EnchantmentHelper.getFireAspect(player) >= 1){
+                  dmgSource = dmgSource.setFire();
+                  entity.setOnFire(true);
+                  entity.setOnFireFor(4);
+               }
+               LootContext.Builder builder = ((LivingEntityAccessor) entity).invokeGetLootContextBuilder(true, dmgSource);
                lootTable.generateLoot(builder.build(LootContextTypes.ENTITY), newItemStack -> token.addToStorage(player.getWorld(),tokenBlock,newItemStack));
             }
          }
@@ -311,7 +326,13 @@ public class TokenGui extends SimpleGui implements TokenRelatedGui{
                      LivingEntity entity = (LivingEntity) entityType.create(player.getWorld());
                      entity.setAttacker(player);
                      entity.setAttacking(player);
-                     LootContext.Builder builder = ((LivingEntityAccessor) entity).invokeGetLootContextBuilder(true, DamageSource.player(player));
+                     DamageSource dmgSource = DamageSource.player(player);
+                     if(EnchantmentHelper.getFireAspect(player) >= 1){
+                        dmgSource = dmgSource.setFire();
+                        entity.setOnFire(true);
+                        entity.setOnFireFor(4);
+                     }
+                     LootContext.Builder builder = ((LivingEntityAccessor) entity).invokeGetLootContextBuilder(true, dmgSource);
                      lootTable.generateLoot(builder.build(LootContextTypes.ENTITY), newItemStack -> token.addToStorage(player.getWorld(),tokenBlock,newItemStack));
    
                      colors.remove(sheepInd);
@@ -360,7 +381,13 @@ public class TokenGui extends SimpleGui implements TokenRelatedGui{
                   LivingEntity entity = (LivingEntity) entityType.create(player.getWorld());
                   entity.setAttacker(player);
                   entity.setAttacking(player);
-                  LootContext.Builder builder = ((LivingEntityAccessor) entity).invokeGetLootContextBuilder(true, DamageSource.player(player));
+                  DamageSource dmgSource = DamageSource.player(player);
+                  if(EnchantmentHelper.getFireAspect(player) >= 1){
+                     dmgSource = dmgSource.setFire();
+                     entity.setOnFire(true);
+                     entity.setOnFireFor(4);
+                  }
+                  LootContext.Builder builder = ((LivingEntityAccessor) entity).invokeGetLootContextBuilder(true, dmgSource);
                   lootTable.generateLoot(builder.build(LootContextTypes.ENTITY), newItemStack -> token.addToStorage(player.getWorld(), tokenBlock, newItemStack));
                }
             }
@@ -470,7 +497,13 @@ public class TokenGui extends SimpleGui implements TokenRelatedGui{
                   entity.readCustomDataFromNbt(guiData);
                   entity.setAttacker(player);
                   entity.setAttacking(player);
-                  LootContext.Builder builder = ((LivingEntityAccessor) entity).invokeGetLootContextBuilder(true, DamageSource.player(player));
+                  DamageSource dmgSource = DamageSource.player(player);
+                  if(EnchantmentHelper.getFireAspect(player) >= 1){
+                     dmgSource = dmgSource.setFire();
+                     entity.setOnFire(true);
+                     entity.setOnFireFor(4);
+                  }
+                  LootContext.Builder builder = ((LivingEntityAccessor) entity).invokeGetLootContextBuilder(true, dmgSource);
                   lootTable.generateLoot(builder.build(LootContextTypes.ENTITY), newItemStack -> token.addToStorage(player.getWorld(),tokenBlock,newItemStack));
    
                   villagers.remove(guiData);
@@ -545,7 +578,10 @@ public class TokenGui extends SimpleGui implements TokenRelatedGui{
             GuiElementInterface clickedSlot = getSlot(index);
             ItemStack clickedItem = clickedSlot != null ? clickedSlot.getItemStack() : ItemStack.EMPTY;
       
-            if(index == 4){
+            if(index == 0){
+               int sortType = tokenData.getInt("sortType");
+               tokenData.putInt("sortType",sortType == 1 ? 0 : 1);
+            }if(index == 4){
                returnItems();
                token.openGui(player, tokenBlock, TokenGuiMode.MAIN_MENU);
             }if(index > 9 && index < 45 && index % 9 != 0 && index % 9 != 8 && !clickedItem.isEmpty()){
@@ -648,6 +684,8 @@ public class TokenGui extends SimpleGui implements TokenRelatedGui{
    
             setSlot(16,new GuiElementBuilder(Items.SHEARS).setName(Text.literal("Tool Storage").formatted(Formatting.GRAY)).hideFlags());
          }
+   
+         setSlot(8,new GuiElementBuilder(Items.NAME_TAG).setName(Text.literal("Rename Token").formatted(Formatting.LIGHT_PURPLE)).hideFlags());
          
       }else if(mode == TokenGuiMode.KILLING){
          setSlot(10,new GuiElementBuilder(Items.WOODEN_SWORD).setName(Text.literal("Kill 1").formatted(Formatting.YELLOW)).hideFlags());
@@ -905,6 +943,17 @@ public class TokenGui extends SimpleGui implements TokenRelatedGui{
             GuiElementBuilder clock = new GuiElementBuilder(Items.CLOCK).setName(Text.literal("Time Till Next Restock").formatted(Formatting.LIGHT_PURPLE)).hideFlags()
                   .addLoreLine(Text.literal((restockTimer/20)+" Seconds").formatted(Formatting.DARK_PURPLE));
             setSlot(8,clock);
+   
+            String sortStr = "";
+            int sortType = tokenData.getInt("sortType");
+            if(sortType == 0){
+               sortStr = "XP";
+            }else if(sortType == 1){
+               sortStr = "Profession";
+            }
+            GuiElementBuilder hopper = new GuiElementBuilder(Items.HOPPER).setName(Text.literal("Sort By: "+sortStr).formatted(Formatting.LIGHT_PURPLE)).hideFlags()
+                  .addLoreLine(Text.literal("Click to Cycle Sorting Type").formatted(Formatting.DARK_PURPLE));
+            setSlot(0,hopper);
          }
       }else if(mode == TokenGuiMode.VILLAGER_MENU){
          if(token instanceof VillagerToken villagerToken){

@@ -6,6 +6,7 @@ import eu.pb4.sgui.api.gui.AnvilInputGui;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.borisshoes.mobtokens.cardinalcomponents.TokenBlock;
 import net.borisshoes.mobtokens.tokens.MobToken;
+import net.borisshoes.mobtokens.tokens.VillagerToken;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.slot.SlotActionType;
@@ -79,7 +80,11 @@ public class RenameGui extends AnvilInputGui implements TokenRelatedGui{
    public void onClose(){
       if(token != null){
          guiData.putString("name",newName);
-         token.openVillagerGui(player,tokenBlock,guiData);
+         if(tokenBlock.getData() == guiData){
+            token.openGui(player,tokenBlock, TokenGui.TokenGuiMode.MAIN_MENU);
+         }else{
+            token.openVillagerGui(player,tokenBlock,guiData);
+         }
       }
    }
 }

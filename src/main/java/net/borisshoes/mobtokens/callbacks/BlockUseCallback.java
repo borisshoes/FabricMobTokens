@@ -56,25 +56,27 @@ public class BlockUseCallback {
             }
          }
          
-         // Magic Block check
-         List<TokenBlock> blocks = TOKEN_BLOCK_COMPONENT.get(world).getBlocks();
-         for(TokenBlock tokenBlock : blocks){
-            if(tokenBlock.getPos().equals(blockHitResult.getBlockPos())){
-               NbtCompound blockData = tokenBlock.getData();
-               if(blockData.contains("id")){
-                  String id = blockData.getString("id");
-                  token = MobTokens.registry.get(id);
-                  //Mobtokens.log(1,"Interacting With Placed Token");
-                  if(playerEntity instanceof ServerPlayerEntity player){
-                     if(hand == Hand.MAIN_HAND){
-                        if(!tokenBlock.isGuiOpen()){
-                           token.openGui(player,tokenBlock, TokenGui.TokenGuiMode.MAIN_MENU);
-                        }else{
-                           playerEntity.sendMessage(Text.literal("Someone else is using the token").formatted(Formatting.RED,Formatting.ITALIC),true);
+         if(!playerEntity.isSneaking()){
+            // Magic Block check
+            List<TokenBlock> blocks = TOKEN_BLOCK_COMPONENT.get(world).getBlocks();
+            for(TokenBlock tokenBlock : blocks){
+               if(tokenBlock.getPos().equals(blockHitResult.getBlockPos())){
+                  NbtCompound blockData = tokenBlock.getData();
+                  if(blockData.contains("id")){
+                     String id = blockData.getString("id");
+                     token = MobTokens.registry.get(id);
+                     //Mobtokens.log(1,"Interacting With Placed Token");
+                     if(playerEntity instanceof ServerPlayerEntity player){
+                        if(hand == Hand.MAIN_HAND){
+                           if(!tokenBlock.isGuiOpen()){
+                              token.openGui(player,tokenBlock, TokenGui.TokenGuiMode.MAIN_MENU);
+                           }else{
+                              playerEntity.sendMessage(Text.literal("Someone else is using the token").formatted(Formatting.RED,Formatting.ITALIC),true);
+                           }
                         }
                      }
+                     result = ActionResult.SUCCESS;
                   }
-                  result = ActionResult.SUCCESS;
                }
             }
          }

@@ -26,7 +26,7 @@
     "mobtokens.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.14.17",
+    "fabricloader": ">=0.14.13",
     "fabric": "*",
     "minecraft": "1.19.3"
   }
