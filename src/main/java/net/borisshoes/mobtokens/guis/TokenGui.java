@@ -372,6 +372,7 @@ public class TokenGui extends SimpleGui implements TokenRelatedGui{
             killCount = Math.min(killCount, ironCount);
             if(killCount > 0){
                tokenData.putInt("ironVillagers", ironCount - killCount);
+               tokenData.putInt("count", count - killCount);
                //System.out.println("Killing: "+killCount+" "+tokenData.getInt("count")+" remain...");
       
                for(int i = 0; i < killCount; i++){
