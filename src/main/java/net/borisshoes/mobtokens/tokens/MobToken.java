@@ -203,18 +203,19 @@ public abstract class MobToken {
       }
    }
    
-   public void placeToken(World world, BlockPos pos, ItemStack item){
-      if(!MobTokenUtils.isMobToken(item)) return;
+   public boolean placeToken(World world, BlockPos pos, ItemStack item){
+      if(!MobTokenUtils.isMobToken(item)) return false;
       try{
          NbtCompound tokenTag = item.getNbt().getCompound("mobtokens");
          NbtCompound tokenData = tokenTag.copy();
          TokenBlock tokenBlock = new TokenBlock(pos.getX(),pos.getY(),pos.getZ(),tokenData,UUID.fromString(getUUID(item)),id);
          
-         TOKEN_BLOCK_COMPONENT.get(world).addBlock(tokenBlock);
+         return TOKEN_BLOCK_COMPONENT.get(world).addBlock(tokenBlock);
 
       }catch(Exception e){
          e.printStackTrace();
       }
+      return false;
    }
    
    public void openTradingGui(ServerPlayerEntity player, TokenBlock tokenBlock, NbtCompound villager){

@@ -46,9 +46,7 @@ public class BlockUseCallback {
                List<LivingEntity> entitiesInBlock = world.getNonSpectatingEntities(LivingEntity.class, new Box(placePos));
                boolean placeable = world.getBlockState(placePos).canReplace(new ItemPlacementContext(playerEntity, hand, item, blockHitResult)) && entitiesInBlock.size() == 0;
                
-               if(placeable && playerEntity instanceof ServerPlayerEntity player){
-                  token.placeToken(world,placePos,item);
-               }else{
+               if(!(placeable && playerEntity instanceof ServerPlayerEntity player && token.placeToken(world,placePos,item))){
                   playerEntity.sendMessage(Text.literal("The Mob Token cannot be placed here.").formatted(Formatting.RED,Formatting.ITALIC),true);
                   result = ActionResult.SUCCESS;
                }

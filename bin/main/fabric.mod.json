@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "mobtokens",
+  "version": "${version}",
+  "name": "Mob Tokens",
+  "description": "Digitizes Passive Mobs and Villagers to reduce server entity lag",
+  "authors": [
+    "BorisShoes"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/mobtokens/icon.png",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      "net.borisshoes.mobtokens.Mobtokens"
+    ],
+    "cardinal-components-world": [
+      "net.borisshoes.mobtokens.cardinalcomponents.WorldDataComponentInitializer"
+    ]
+  },
+  "custom": {
+    "cardinal-components": ["mobtokens:tokenblocks"]
+  },
+  "mixins": [
+    "mobtokens.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.13",
+    "fabric": "*",
+    "minecraft": "1.19.3"
+  }
+}

@@ -163,10 +163,6 @@ public class TradingGui extends MerchantGui implements TokenRelatedGui{
                   player.addExperience(3+(int)(Math.random()*5));
                }
                guiData.putInt("Xp",guiData.getInt("Xp")+times*tradeOffer.getMerchantExperience());
-               if(TradeGenerationUtils.canLevelUp(guiData)){
-                  TradeGenerationUtils.levelUp(player.getWorld(),guiData,offerList);
-                  buildGui();
-               }
                //System.out.println("Uses: "+tradeOffer.getUses()+" Max: "+tradeOffer.getMaxUses());
                break;
             }
@@ -187,6 +183,12 @@ public class TradingGui extends MerchantGui implements TokenRelatedGui{
    @Override
    public void onClose(){
       if(token != null){
+         if(TradeGenerationUtils.canLevelUp(guiData)){
+            NbtCompound offersComp = guiData.getCompound("Offers");
+            TradeOfferList offerList = new TradeOfferList(offersComp);
+            TradeGenerationUtils.levelUp(player.getWorld(),guiData,offerList);
+            guiData.put("Offers",offerList.toNbt());
+         }
          token.openGui(player,tokenBlock, TokenGui.TokenGuiMode.TRADING_MENU);
       }
    }

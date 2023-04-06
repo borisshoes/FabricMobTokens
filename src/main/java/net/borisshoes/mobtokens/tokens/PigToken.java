@@ -24,6 +24,7 @@ public class PigToken extends MobToken{
    
       foods = new ArrayList<>();
       foods.add(new ItemStack(Items.CARROT));
+      foods.add(new ItemStack(Items.POTATO));
       passiveProducts = new ArrayList<>();
       activeProducts = new ArrayList<>();
       requiredItems = new ArrayList<>();
