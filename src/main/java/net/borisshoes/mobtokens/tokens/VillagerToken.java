@@ -232,11 +232,13 @@ public class VillagerToken extends MobToken{
       }
    
       Comparator<NbtCompound> villagerComparator = (NbtCompound v1, NbtCompound v2) -> {
+         NbtCompound v1d = v1.getCompound("VillagerData");
+         NbtCompound v2d = v2.getCompound("VillagerData");
          int sum1 = 0,sum2 = 0;
          if(sortType == 0){
             sum1 = v1.getInt("Xp"); sum2 = v2.getInt("Xp");
          }else if(sortType == 1){
-            sum1 = v1.getString("profession").compareTo(v2.getString("profession"));
+            sum1 = v1d.getString("profession").compareTo(v2d.getString("profession"));
          }
          if(v1.getBoolean("favorite")) sum1 += 100000;
          if(v2.getBoolean("favorite")) sum2 += 100000;
