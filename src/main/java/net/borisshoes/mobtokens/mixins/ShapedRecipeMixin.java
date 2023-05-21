@@ -5,6 +5,7 @@ import net.borisshoes.mobtokens.utils.MobHeadUtils;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.ShapedRecipe;
+import net.minecraft.registry.DynamicRegistryManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -13,8 +14,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ShapedRecipe.class)
 public abstract class ShapedRecipeMixin {
    
-   @Inject(method="craft(Lnet/minecraft/inventory/CraftingInventory;)Lnet/minecraft/item/ItemStack;", at= @At("RETURN"), cancellable = true)
-   public void mobtokens_tokenCraft(CraftingInventory craftingInventory, CallbackInfoReturnable<ItemStack> cir){
+   @Inject(method="craft(Lnet/minecraft/inventory/CraftingInventory;Lnet/minecraft/registry/DynamicRegistryManager;)Lnet/minecraft/item/ItemStack;", at= @At("RETURN"), cancellable = true)
+   public void mobtokens_tokenCraft(CraftingInventory craftingInventory, DynamicRegistryManager dynamicRegistryManager, CallbackInfoReturnable<ItemStack> cir){
       ShapedRecipe recipe = (ShapedRecipe) (Object) this;
       if(recipe.getId().toString().equals("mobtokens:mob_token")){
          ItemStack emptyToken = MobHeadUtils.EMPTY_TOKEN.copy();

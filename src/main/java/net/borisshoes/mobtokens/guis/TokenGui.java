@@ -253,9 +253,9 @@ public class TokenGui extends SimpleGui implements TokenRelatedGui{
                LivingEntity entity = (LivingEntity) entityType.create(player.getWorld());
                entity.setAttacker(player);
                entity.setAttacking(player);
-               DamageSource dmgSource = DamageSource.player(player);
+               DamageSource dmgSource = player.getDamageSources().playerAttack(player);
                if(EnchantmentHelper.getFireAspect(player) >= 1){
-                  dmgSource = dmgSource.setFire();
+                  dmgSource = new DamageSource(player.getDamageSources().onFire().getTypeRegistryEntry(),player);
                   entity.setOnFire(true);
                   entity.setOnFireFor(4);
                }
@@ -326,9 +326,9 @@ public class TokenGui extends SimpleGui implements TokenRelatedGui{
                      LivingEntity entity = (LivingEntity) entityType.create(player.getWorld());
                      entity.setAttacker(player);
                      entity.setAttacking(player);
-                     DamageSource dmgSource = DamageSource.player(player);
+                     DamageSource dmgSource = player.getDamageSources().playerAttack(player);
                      if(EnchantmentHelper.getFireAspect(player) >= 1){
-                        dmgSource = dmgSource.setFire();
+                        dmgSource = new DamageSource(player.getDamageSources().onFire().getTypeRegistryEntry(),player);
                         entity.setOnFire(true);
                         entity.setOnFireFor(4);
                      }
@@ -382,9 +382,9 @@ public class TokenGui extends SimpleGui implements TokenRelatedGui{
                   LivingEntity entity = (LivingEntity) entityType.create(player.getWorld());
                   entity.setAttacker(player);
                   entity.setAttacking(player);
-                  DamageSource dmgSource = DamageSource.player(player);
+                  DamageSource dmgSource = player.getDamageSources().playerAttack(player);
                   if(EnchantmentHelper.getFireAspect(player) >= 1){
-                     dmgSource = dmgSource.setFire();
+                     dmgSource = new DamageSource(player.getDamageSources().onFire().getTypeRegistryEntry(),player);
                      entity.setOnFire(true);
                      entity.setOnFireFor(4);
                   }
@@ -498,9 +498,9 @@ public class TokenGui extends SimpleGui implements TokenRelatedGui{
                   entity.readCustomDataFromNbt(guiData);
                   entity.setAttacker(player);
                   entity.setAttacking(player);
-                  DamageSource dmgSource = DamageSource.player(player);
+                  DamageSource dmgSource = player.getDamageSources().playerAttack(player);
                   if(EnchantmentHelper.getFireAspect(player) >= 1){
-                     dmgSource = dmgSource.setFire();
+                     dmgSource = new DamageSource(player.getDamageSources().onFire().getTypeRegistryEntry(),player);
                      entity.setOnFire(true);
                      entity.setOnFireFor(4);
                   }
